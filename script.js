@@ -72,6 +72,8 @@ if (!days || days < 1 || days > 30) {
   }
 
   const neto = salary - irpf - fonasa + extra;
+  const netoWithoutExtra = salary - irpf - fonasa;
+  
 
   document.getElementById("result").innerHTML = `
     💰 Bruto: $${salary}<br>
@@ -85,10 +87,10 @@ if (!days || days < 1 || days > 30) {
     <hr>
     🧾 Neto: $${neto.toFixed(2)}<br>
     💵 Aguinaldo Bruto: $${aguinaldoBruto(salary, months).toFixed(2)} <br>
-    💲 Aguinaldo Neto: $${aguinaldoNeto(neto, months).toFixed(2)} <br>
-   ${document.getElementById("vacation").checked ? `🏖️ Salario vacacional: $${calculateVacation(neto, days).toFixed(2)}` : ""}
+    💲 Aguinaldo Neto: $${aguinaldoNeto(netoWithoutExtra, months).toFixed(2)} <br>
+   ${document.getElementById("vacation").checked ? `🏖️ Salario vacacional: $${calculateVacation(netoWithoutExtra, days).toFixed(2)}` : ""}
   `;
-  document.getElementById("downloadPDF").disabled = false; 
+    document.getElementById("downloadPDF").disabled = false; 
   drawChart(irpf, fonasa, extra, neto, extraLabel);
 }
 
@@ -129,6 +131,7 @@ function drawChart(irpf, fonasa, extra, neto, extraLabel) {
   });
 }
 
+
 /* PDF */
 function downloadPDF() {
   const salary = Number(document.getElementById("salary").value);
@@ -157,6 +160,8 @@ function downloadPDF() {
   }
 
   const neto = salary - irpf - fonasa + extra;
+  const netoWithoutExtra = salary - irpf - fonasa;
+
 
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
@@ -180,9 +185,9 @@ function downloadPDF() {
   pdf.setFontSize(16);
   pdf.text(`NETO: $${neto.toFixed(2)}`, 20, 110);
   pdf.text(`Aguinaldo Bruto: $${aguinaldoBruto(salary, months).toFixed(2)}`, 20, 120);
-  pdf.text(`Aguinaldo Neto: $${aguinaldoNeto(neto, months).toFixed(2)}`, 20, 130);
+  pdf.text(`Aguinaldo Neto: $${aguinaldoNeto(netoWithoutExtra, months).toFixed(2)}`, 20, 130);
   if (document.getElementById("vacation").checked) {
-    pdf.text(`Salario vacacional: $${calculateVacation(neto, days).toFixed(2)}`, 20, 140);
+    pdf.text(`Salario vacacional: $${calculateVacation(netoWithoutExtra, days).toFixed(2)}`, 20, 140);
   }
   pdf.save("liquidacion_(" + new Date().toLocaleDateString() + "_" + new Date().toLocaleTimeString() +").pdf");
 }
